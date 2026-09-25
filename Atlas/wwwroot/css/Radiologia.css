@@ -13,6 +13,17 @@ body {
 
 body.visor-page {
     overflow-x: hidden;
+    margin: 0;
+    padding: 0;
+}
+
+.visor-app-wrapper {
+    padding: 10px 16px;
+    width: 100vw;
+    min-height: 100vh;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
 }
 
 .theme-dark .logoContainer {
