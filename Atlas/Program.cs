@@ -1,7 +1,19 @@
+using Microsoft.EntityFrameworkCore;
+using Negocio.Persistencia;
+using Negocio.Servicios;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+// Configuración de Entity Framework Core con SQL Server
+builder.Services.AddDbContext<DharmaDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("ConexionSQL")));
+
+// Servicios de Negocio 
+builder.Services.AddScoped<IGestionVisor, GestionVisor>();
+
 
 var app = builder.Build();
 

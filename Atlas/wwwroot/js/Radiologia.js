@@ -79,12 +79,12 @@ jQuery(function () {
     // ==========================================================
     // ACTUALIZACIÓN DE HUD Y ESTADOS
     // ==========================================================
-    const updateHUD = () => {
+    const updateHUD = (vp) => {
         if (!currentImage) return;
-        const viewport = cornerstone.getViewport(element);
+        const viewport = vp || cornerstone.getViewport(element);
         if (!viewport) return;
 
-        // Zoom y modo
+        // Zoom y modo dinámico
         const zoomPercent = Math.round((viewport.scale || 1) * 100);
         let modoTexto = "PAN";
         if (toolMode === "point") modoTexto = "PUNTO";
@@ -99,7 +99,9 @@ jQuery(function () {
         if (viewport.vflip) rotFlipInfo += " | Flip V";
         if (viewport.invert) rotFlipInfo += " | Invertido";
 
-        $("#hudZoom").html(`<i class="fa-solid fa-crosshairs text-success me-1"></i> ZOOM: ${zoomPercent}% | MODO: ${modoTexto}${rotFlipInfo}`);
+        $("#hudZoom").html(`<i class="fa-solid fa-crosshairs text-success me-1"></i> MODO: ${modoTexto}${rotFlipInfo}`);
+        $("#telZoom").text(`${zoomPercent}%`);
+        $("#tamanio, #fs_tamanio").val(Math.round((viewport.scale || 1) * 50));
 
         // Ventana (VOI)
         if (viewport.voi) {
@@ -613,20 +615,16 @@ jQuery(function () {
         });
 
         // Actualizar ficha demográfica
-        $("#cardPatientName").text(patientNameVal);
+        if (!$("#selectorPaciente").val()) {
+            $("#cardPatientName").text(patientNameVal);
+        }
         $("#cardPatientId").text(patientIdVal);
         $("#cardStudyDate").text(studyDateVal);
+        if (studyDateVal && studyDateVal !== "--") {
+            $("#cardPatientDate").text(studyDateVal);
+        }
         $("#hudPatient").html(`<i class="fa-solid fa-hospital-user text-info me-1"></i> PACIENTE: ${patientNameVal}`);
     };
-
-    // Búsqueda en vivo de tags
-    $("#tagSearchInput").on("input", function () {
-        const query = $(this).val().toLowerCase();
-        $(".dicom-tag-row").each(function () {
-            const text = $(this).text().toLowerCase();
-            $(this).toggle(text.indexOf(query) > -1);
-        });
-    });
 
     // ==========================================================
     // CARGA DE RADIOGRAFÍAS (DICOM)
@@ -727,6 +725,99 @@ jQuery(function () {
         }
     });
 
+    // Evento de selección de Paciente desde el dropdown
+    $("#selectorPaciente").on("change", function () {
+        const idPaciente = $(this).val();
+        if (!idPaciente) {
+            $("#cardPatientName").text("N/D");
+            $("#cardPatientHist").text("N/D");
+            $("#cardPatientBirth").text("N/D");
+            $("#cardPatientSex").text("N/D");
+            $("#cardPatientPhone").text("N/D");
+            $("#cardPatientEmail").text("N/D").attr("title", "");
+            $("#cardPatientCity").text("N/D");
+            $("#cardPatientDate").text("N/D");
+            return;
+        }
+
+        $.getJSON("/Visor/GetDatosPaciente", { idPaciente: idPaciente })
+            .done(function (paciente) {
+                if (!paciente) {
+                    $("#cardPatientName").text("N/D");
+                    $("#cardPatientHist").text("N/D");
+                    $("#cardPatientBirth").text("N/D");
+                    $("#cardPatientSex").text("N/D");
+                    $("#cardPatientPhone").text("N/D");
+                    $("#cardPatientEmail").text("N/D").attr("title", "");
+                    $("#cardPatientCity").text("N/D");
+                    $("#cardPatientDate").text("N/D");
+                    return;
+                }
+
+                // Rellenar ficha demográfica del paciente
+                const nombreCompleto = ((paciente.nombre || "") + " " + (paciente.apellidos || "")).trim();
+                $("#cardPatientName").text(nombreCompleto || "N/D");
+                $("#cardPatientHist").text(paciente.numeroHistoriaClinica || "N/D");
+                $("#cardPatientBirth").text(paciente.fechaNacimiento || "N/D");
+
+                let sexoTexto = "N/D";
+                if (paciente.sexo === "M" || paciente.sexo === "Masculino") sexoTexto = "Masculino";
+                else if (paciente.sexo === "F" || paciente.sexo === "Femenino") sexoTexto = "Femenino";
+                else if (paciente.sexo) sexoTexto = paciente.sexo;
+                $("#cardPatientSex").text(sexoTexto);
+
+                $("#cardPatientPhone").text(paciente.telefono || "N/D");
+                $("#cardPatientEmail").text(paciente.email || "N/D").attr("title", paciente.email || "");
+                $("#cardPatientCity").text(paciente.ciudad || "N/D");
+
+                // Volcar radiografías en Estudios DCM (panel izquierdo) manteniendo el icono
+                const $thumbnails = $("#thumbnailsList");
+                $thumbnails.empty();
+
+                if (paciente.radiografias && paciente.radiografias.length > 0) {
+                    const primerEstudio = paciente.radiografias[0];
+                    $("#cardPatientDate").text(primerEstudio.studyDate || "N/D");
+
+                    paciente.radiografias.forEach(function (r, idx) {
+                        const isActive = idx === 0 ? " active" : "";
+                        const ruta = "/media/images/Radiografias/5.dcm";
+                        const code = r.nombreEstudio || `Radiografía ${idx + 1}`;
+                        const date = r.studyDate || "N/D";
+                        const extra = [r.zonaAnatomica, r.tipoRadiografia].filter(Boolean).join(" • ");
+
+                        $thumbnails.append(
+                            `<div class="thumbnail-item${isActive}" data-dcm="${ruta}" data-code="${code}" data-date="${date}">` +
+                                `<div class="thumbnail-icon-box">` +
+                                    `<i class="fa-solid fa-x-ray"></i>` +
+                                `</div>` +
+                                `<div class="thumbnail-meta">` +
+                                    `<div class="thumbnail-code">${code}</div>` +
+                                    `<div class="thumbnail-date">${date}${extra ? " • " + extra : ""}</div>` +
+                                `</div>` +
+                            `</div>`
+                        );
+                    });
+
+                    // Cargar primer estudio verificado
+                    cargarRadiografia("/media/images/Radiografias/5.dcm", primerEstudio.nombreEstudio || "R-00 Principal");
+                } else {
+                    $("#cardPatientDate").text("N/D");
+                    $thumbnails.html('<div class="text-white text-center py-3" style="font-size:0.75rem;">Sin radiografías registradas</div>');
+                }
+            })
+            .fail(function (err) {
+                console.error("Error al cargar datos del paciente:", err);
+                $("#cardPatientName").text("N/D");
+                $("#cardPatientHist").text("N/D");
+                $("#cardPatientBirth").text("N/D");
+                $("#cardPatientSex").text("N/D");
+                $("#cardPatientPhone").text("N/D");
+                $("#cardPatientEmail").text("N/D").attr("title", "");
+                $("#cardPatientCity").text("N/D");
+                $("#cardPatientDate").text("N/D");
+            });
+    });
+
     // Eventos de selección de radiografía
     $("#listadoRadiografias").change(function () {
         const rutaDicom = $(this).val();
@@ -734,15 +825,19 @@ jQuery(function () {
         cargarRadiografia(rutaDicom, texto);
     });
 
-    $(".thumbnail-item").on("click", function () {
+    // Clic en elemento de miniatura / estudio (delegado para soportar items dinámicos)
+    $("#thumbnailsList").on("click", ".thumbnail-item", function () {
         const rutaDicom = $(this).data("dcm");
         const code = $(this).data("code");
         const date = $(this).data("date");
+        if (date && date !== "N/D") {
+            $("#cardPatientDate").text(date);
+        }
         cargarRadiografia(rutaDicom, `${code} (${date})`);
     });
 
     // Cargar automáticamente el estudio principal 5.dcm verificado
-    const primerEstudio = "/media/Radiografias/5.dcm";
+    const primerEstudio = "/media/images/Radiografias/5.dcm";
     cargarRadiografia(primerEstudio, "R-00 Principal (Verificado)");
 
     // ==========================================================
@@ -939,6 +1034,10 @@ jQuery(function () {
     // RENDERIZADO EN CANVAS (CORNERSTONEIMAGERENDERED)
     // ==========================================================
     element.addEventListener("cornerstoneimagerendered", function (e) {
+        if (e.detail && e.detail.viewport) {
+            updateHUD(e.detail.viewport);
+        }
+
         const ctx = e.detail.canvasContext;
         if (!ctx) return;
 
@@ -1191,4 +1290,65 @@ jQuery(function () {
         cornerstone.resize(element, true);
     });
     observer.observe(element);
+
+    // ==========================================================
+    // MENÚ CONTEXTUAL CLÍNICO PACS (CLIC DERECHO EN VISOR)
+    // ==========================================================
+    const $contextMenu = $("#pacsContextMenu");
+
+    // Abrir menú contextual al hacer clic derecho sobre el visor
+    $("#dicomViewer, .pacs-viewer-viewport").on("contextmenu", function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        const mouseX = e.clientX;
+        const mouseY = e.clientY;
+        const menuWidth = 210;
+        const menuHeight = 250;
+        const windowWidth = $(window).width();
+        const windowHeight = $(window).height();
+
+        let posX = mouseX;
+        let posY = mouseY;
+        if (mouseX + menuWidth > windowWidth) {
+            posX = mouseX - menuWidth;
+        }
+        if (mouseY + menuHeight > windowHeight) {
+            posY = mouseY - menuHeight;
+        }
+
+        $contextMenu.css({
+            top: posY + "px",
+            left: posX + "px",
+            display: "block"
+        });
+    });
+
+    // Cerrar menú contextual al hacer clic fuera o con Escape
+    $(document).on("click", function (e) {
+        if (!$(e.target).closest("#pacsContextMenu").length) {
+            $contextMenu.hide();
+        }
+    });
+
+    $(document).on("keydown", function (e) {
+        if (e.key === "Escape") {
+            $contextMenu.hide();
+        }
+    });
+
+    // Despacho de acciones del menú contextual
+    $contextMenu.on("click", ".pacs-ctx-item", function () {
+        const action = $(this).data("action");
+        const val = $(this).data("val");
+        $contextMenu.hide();
+
+        if (action === "tool") {
+            $("#toolMode").val(val).trigger("change");
+        } else if (action === "clear") {
+            $("#limpiarDibujos").trigger("click");
+        } else if (action === "reset") {
+            $("#reset").trigger("click");
+        }
+    });
 });

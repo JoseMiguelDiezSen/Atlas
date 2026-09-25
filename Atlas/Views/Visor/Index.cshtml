@@ -6,7 +6,8 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Estación Radiológica Atlas PACS</title>
+    <!-- Título de la pestaña en el navegador -->
+    <title>Atlas - Visor</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/lib/font-awesome/css/all.min.css" />
     <link href="~/css/Radiologia.css" rel="stylesheet" asp-append-version="true" />
@@ -15,20 +16,15 @@
 
 <div class="visor-app-wrapper">
 
-    <!-- ===================== ENCABEZADO PACS ===================== -->
+    <!-- ===================== ENCABEZADO PRINCIPAL ATLAS ===================== -->
     <header class="rad-header">
-        <div class="rad-header-title">
-            <i class="fa-solid fa-circle-radiation rad-icon-glow"></i>
-            <span>Estación Radiológica Atlas PACS</span>
-            <span class="badge bg-info bg-opacity-25 text-info border border-info ms-2" style="font-size:0.75rem;">Pro Workstation</span>
+        <!-- A la izquierda: solo el logo corporativo -->
+        <div class="rad-header-logo d-flex align-items-center">
+            <img src="~/media/images/logoJMD.png" alt="Logo JMD" class="rad-logo-img" />
         </div>
-        <div class="rad-header-actions">
-            <button class="btn-rad-action btn-sm" id="btnToggleLeftPanel" title="Ocultar / Mostrar Estudios (Panel Izquierdo)">
-                <i class="fa-solid fa-folder-open"></i> <span class="d-none d-lg-inline">Estudios</span>
-            </button>
-            <button class="btn-rad-action btn-sm" id="btnToggleRightPanel" title="Ocultar / Mostrar Herramientas & DICOM (Panel Derecho)">
-                <i class="fa-solid fa-sliders"></i> <span class="d-none d-lg-inline">Inspector / Herramientas</span>
-            </button>
+        <!-- A la derecha: título principal de la estación PACS -->
+        <div class="rad-header-title d-flex align-items-center">
+            <span class="rad-brand-text">ATLAS - Visor DICOM</span>
         </div>
     </header>
 
@@ -151,46 +147,32 @@
         <!-- COLUMNA 1: PANEL IZQUIERDO (ESTUDIOS, MINIATURAS, CARGA LOCAL) -->
         <aside class="pacs-panel pacs-panel-left" id="panelIzquierdo">
             <div class="pacs-panel-header">
-                <span><i class="fa-solid fa-folder-tree text-info"></i> Explorador PACS</span>
                 <button class="pacs-panel-close-btn" id="btnCloseLeftPanel" title="Ocultar panel">
                     <i class="fa-solid fa-angles-left"></i>
                 </button>
-            </div>
-
-            <!-- CARGA DE ARCHIVO DICOM LOCAL -->
-            <div class="rad-card mb-2">
-                <div class="rad-card-title">
-                    <i class="fa-solid fa-cloud-arrow-up text-primary"></i> Cargar DICOM Local
-                </div>
-                <label for="localDicomInput" class="btn-rad-action w-100 justify-content-center text-center py-2" style="cursor:pointer;">
-                    <i class="fa-solid fa-file-medical text-info"></i> Seleccionar .dcm
-                </label>
-                <input type="file" id="localDicomInput" accept=".dcm,application/dicom" style="display:none;" />
-                <div class="text-muted mt-1" style="font-size:0.68rem; text-align:center;">
-                    <i class="fa-solid fa-shield-halved text-success"></i> Procesamiento 100% local en cliente
-                </div>
+                <span class="flex-grow-1 text-center">Explorador PACS</span>
+                <div style="width:28px;" aria-hidden="true"></div>
             </div>
 
             <!-- LISTA DE ESTUDIOS -->
             <div class="rad-card mb-2">
-                <div class="rad-card-title d-flex justify-content-between align-items-center">
-                    <span><i class="fa-solid fa-images text-info"></i> Estudios DCM</span>
-                    <span class="badge bg-secondary text-light" style="font-size:0.65rem;">6 Estudios</span>
+                <div class="rad-card-title justify-content-center text-center">
+                    Estudios DCM
                 </div>
 
                 <div class="thumbnails-container" id="thumbnailsList">
                     <!-- 5.dcm es el estudio principal verificado y funcional -->
-                    <div class="thumbnail-item active" data-dcm="/media/Radiografias/5.dcm" data-code="R-00" data-date="05-09-2026">
-                        <div class="thumbnail-icon-box text-success">
-                            <i class="fa-solid fa-circle-check"></i>
+                    <div class="thumbnail-item active" data-dcm="/media/images/Radiografias/5.dcm" data-code="R-00" data-date="05-09-2026">
+                        <div class="thumbnail-icon-box">
+                            <i class="fa-solid fa-x-ray"></i>
                         </div>
                         <div class="thumbnail-meta">
-                            <div class="thumbnail-code">R-00 (Principal) <span class="badge bg-success bg-opacity-25 text-success" style="font-size:0.6rem;">OK</span></div>
+                            <div class="thumbnail-code">R-00 (Principal)</div>
                             <div class="thumbnail-date">05/09/2026 • 2048x2048</div>
                         </div>
                     </div>
 
-                    <div class="thumbnail-item" data-dcm="/media/Radiografias/6.dcm" data-code="R-00 Alt" data-date="05-09-2026">
+                    <div class="thumbnail-item" data-dcm="/media/images/Radiografias/6.dcm" data-code="R-00 Alt" data-date="05-09-2026">
                         <div class="thumbnail-icon-box">
                             <i class="fa-solid fa-x-ray"></i>
                         </div>
@@ -200,7 +182,7 @@
                         </div>
                     </div>
 
-                    <div class="thumbnail-item" data-dcm="/media/Radiografias/7.dcm" data-code="R-01" data-date="17-03-2026">
+                    <div class="thumbnail-item" data-dcm="/media/images/Radiografias/7.dcm" data-code="R-01" data-date="17-03-2026">
                         <div class="thumbnail-icon-box">
                             <i class="fa-solid fa-x-ray"></i>
                         </div>
@@ -210,7 +192,7 @@
                         </div>
                     </div>
 
-                    <div class="thumbnail-item" data-dcm="/media/Radiografias/2.dcm" data-code="R-02" data-date="21-03-2026">
+                    <div class="thumbnail-item" data-dcm="/media/images/Radiografias/2.dcm" data-code="R-02" data-date="21-03-2026">
                         <div class="thumbnail-icon-box">
                             <i class="fa-solid fa-x-ray"></i>
                         </div>
@@ -220,7 +202,7 @@
                         </div>
                     </div>
 
-                    <div class="thumbnail-item" data-dcm="/media/Radiografias/3.dcm" data-code="R-03" data-date="27-05-2026">
+                    <div class="thumbnail-item" data-dcm="/media/images/Radiografias/3.dcm" data-code="R-03" data-date="27-05-2026">
                         <div class="thumbnail-icon-box">
                             <i class="fa-solid fa-x-ray"></i>
                         </div>
@@ -230,7 +212,7 @@
                         </div>
                     </div>
 
-                    <div class="thumbnail-item" data-dcm="/media/Radiografias/4.dcm" data-code="R-04" data-date="05-09-2026">
+                    <div class="thumbnail-item" data-dcm="/media/images/Radiografias/4.dcm" data-code="R-04" data-date="05-09-2026">
                         <div class="thumbnail-icon-box">
                             <i class="fa-solid fa-x-ray"></i>
                         </div>
@@ -244,16 +226,16 @@
 
             <!-- SELECTOR CLÁSICO COMPATIBLE -->
             <div class="rad-card">
-                <div class="rad-card-title">
-                    <i class="fa-solid fa-sliders text-warning"></i> Selector Rápido
+                <div class="rad-card-title justify-content-center text-center">
+                    Selector Rápido
                 </div>
                 <select name="ListadoRadiografias" class="form-select form-select-sm rad-select w-100 mb-2" id="listadoRadiografias">
-                    <option value="/media/Radiografias/5.dcm" selected>R-00 Principal (Verificado)</option>
-                    <option value="/media/Radiografias/6.dcm">R-00 Alt (05-09-2026)</option>
-                    <option value="/media/Radiografias/7.dcm">R-01 (17-03-2026)</option>
-                    <option value="/media/Radiografias/2.dcm">R-02 (21-03-2026)</option>
-                    <option value="/media/Radiografias/3.dcm">R-03 (27-05-2026)</option>
-                    <option value="/media/Radiografias/4.dcm">R-04 (05-09-2026)</option>
+                    <option value="/media/images/Radiografias/5.dcm" selected>R-00 Principal (Verificado)</option>
+                    <option value="/media/images/Radiografias/6.dcm">R-00 Alt (05-09-2026)</option>
+                    <option value="/media/images/Radiografias/7.dcm">R-01 (17-03-2026)</option>
+                    <option value="/media/images/Radiografias/2.dcm">R-02 (21-03-2026)</option>
+                    <option value="/media/images/Radiografias/3.dcm">R-03 (27-05-2026)</option>
+                    <option value="/media/images/Radiografias/4.dcm">R-04 (05-09-2026)</option>
                 </select>
 
                 <label class="rad-info-label mb-1" for="Posicion">
@@ -340,7 +322,7 @@
                     <i class="fa-solid fa-file-medical text-primary me-1"></i> ESTUDIO: CARGANDO...
                 </div>
                 <div class="hud-tag hud-bottom-left" id="hudZoom">
-                    <i class="fa-solid fa-crosshairs text-success me-1"></i> ZOOM: 100% | MODO: PAN
+                    <i class="fa-solid fa-crosshairs text-success me-1"></i> MODO: PAN
                 </div>
                 <div class="hud-tag hud-bottom-right" id="hudVOI">
                     <i class="fa-solid fa-circle-half-stroke text-warning me-1"></i> WC: -- | WW: --
@@ -370,6 +352,11 @@
 
             <!-- ===================== BARRA DE TELEMETRÍA INFERIOR ===================== -->
             <div class="pacs-telemetry-bar">
+                <div class="telemetry-item">
+                    <span class="telemetry-label"><i class="fa-solid fa-magnifying-glass text-success"></i> Zoom:</span>
+                    <span class="telemetry-value" id="telZoom">100%</span>
+                </div>
+                <div class="telemetry-divider"></div>
                 <div class="telemetry-item">
                     <span class="telemetry-label"><i class="fa-solid fa-location-crosshairs text-info"></i> Posición:</span>
                     <span class="telemetry-value" id="telCoord">X: -- | Y: --</span>
@@ -401,108 +388,78 @@
         <!-- COLUMNA 3: PANEL DERECHO (INSPECTOR DICOM, MEDICIONES Y AJUSTES) -->
         <aside class="pacs-panel pacs-panel-right" id="panelDerecho">
             <div class="pacs-panel-header">
-                <span><i class="fa-solid fa-microscope text-primary"></i> Suite Diagnóstica</span>
+                <div style="width:28px;" aria-hidden="true"></div>
+                <span class="flex-grow-1 text-center">Datos del Paciente</span>
                 <button class="pacs-panel-close-btn" id="btnCloseRightPanel" title="Ocultar panel">
                     <i class="fa-solid fa-angles-right"></i>
                 </button>
             </div>
 
-            <!-- TABS DE NAVEGACIÓN DERECHA -->
-            <ul class="nav nav-tabs pacs-tabs mb-2" id="rightTabs" role="tablist">
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link active" id="tab-tags-btn" data-bs-toggle="tab" data-bs-target="#tab-tags" type="button" role="tab">
-                        <i class="fa-solid fa-tags"></i> Tags DICOM
-                    </button>
-                </li>
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="tab-med-btn" data-bs-toggle="tab" data-bs-target="#tab-med" type="button" role="tab">
-                        <i class="fa-solid fa-ruler-combined"></i> Medidas (<span id="measurementsCount">0</span>)
-                    </button>
-                </li>
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="tab-patient-btn" data-bs-toggle="tab" data-bs-target="#tab-patient" type="button" role="tab">
-                        <i class="fa-solid fa-id-card"></i> Paciente
-                    </button>
-                </li>
-            </ul>
-
-            <!-- CONTENIDO DE LOS TABS -->
-            <div class="tab-content">
-
-                <!-- TAB 1: INSPECTOR DE TAGS DICOM -->
-                <div class="tab-pane fade show active" id="tab-tags" role="tabpanel">
-                    <div class="rad-card p-2 mb-2">
-                        <div class="input-group input-group-sm mb-2">
-                            <span class="input-group-text bg-dark border-secondary text-muted"><i class="fa-solid fa-magnifying-glass"></i></span>
-                            <input type="text" id="tagSearchInput" class="form-control form-control-sm bg-dark text-light border-secondary" placeholder="Filtrar tag (ej: patient, 0028, mod)...">
-                        </div>
-                        <div class="pacs-tags-table-container">
-                            <table class="table table-sm table-dark table-striped pacs-tags-table mb-0" id="tagsTable">
-                                <thead>
-                                    <tr>
-                                        <th style="width:25%;">Tag</th>
-                                        <th style="width:35%;">Descripción</th>
-                                        <th style="width:40%;">Valor</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="tagsTableBody">
-                                    <tr>
-                                        <td colspan="3" class="text-center text-muted py-3">
-                                            <i class="fa-solid fa-spinner fa-spin"></i> Cargando metadatos DICOM...
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
+            <!-- SELECTOR DE PACIENTES (DESPLEGABLE) -->
+            <div class="rad-card mb-2">
+                <div class="rad-card-title justify-content-center text-center">
+                    Seleccionar Paciente
                 </div>
+                <select id="selectorPaciente" class="form-select form-select-sm rad-select w-100">
+                    <option value="">-- Seleccionar Paciente --</option>
+                    @if (ViewBag.Pacientes != null)
+                    {
+                        foreach (var pac in (List<Negocio.Persistencia.Modelos.Paciente>)ViewBag.Pacientes)
+                        {
+                            <option value="@pac.IdPaciente">@pac.Apellidos, @pac.Nombre (@pac.DNI)</option>
+                        }
+                    }
+                </select>
+            </div>
 
-                <!-- TAB 2: LISTA DE MEDICIONES ACTIVAS -->
-                <div class="tab-pane fade" id="tab-med" role="tabpanel">
-                    <div class="rad-card p-2 mb-2">
-                        <div class="d-flex justify-content-between align-items-center mb-2">
-                            <span class="rad-info-label"><i class="fa-solid fa-list-check"></i> Anotaciones Registradas</span>
-                            <button class="btn btn-sm btn-outline-info py-0 px-2" id="btnExportMedJson" title="Descargar reporte en JSON" style="font-size:0.72rem;">
-                                <i class="fa-solid fa-file-arrow-down"></i> Exportar
-                            </button>
-                        </div>
-                        <div class="pacs-measurements-list" id="measurementsList">
-                            <div class="text-muted text-center py-4" style="font-size:0.78rem;" id="noMeasurementsMsg">
-                                <i class="fa-solid fa-pen-ruler fa-2x mb-2 text-secondary"></i><br />
-                                No hay mediciones en este estudio.<br />
-                                Usa la herramienta Línea, Rectángulo, Ángulo o Punto.
-                            </div>
-                        </div>
-                    </div>
+            <!-- FICHA DE PACIENTE -->
+            <div class="rad-card mb-2">
+                <div class="rad-card-title justify-content-center text-center">
+                    Datos del Paciente
                 </div>
-
-                <!-- TAB 3: FICHA DE PACIENTE -->
-                <div class="tab-pane fade" id="tab-patient" role="tabpanel">
-                    <div class="rad-card mb-2">
-                        <div class="rad-card-title">
-                            <i class="fa-solid fa-id-card text-info"></i> Datos Demográficos
-                        </div>
-                        <div class="rad-info-row">
-                            <span class="rad-info-label"><i class="fa-solid fa-user"></i> Nombre Paciente</span>
-                            <span class="rad-info-value" id="cardPatientName">Archivo Demo</span>
-                        </div>
-                        <div class="rad-info-row mt-2">
-                            <span class="rad-info-label"><i class="fa-solid fa-fingerprint"></i> ID Paciente</span>
-                            <span class="rad-info-value" id="cardPatientId">PAC-2026-001</span>
-                        </div>
-                        <div class="rad-info-row mt-2">
-                            <span class="rad-info-label"><i class="fa-regular fa-calendar-check"></i> Fecha de Estudio</span>
-                            <span class="rad-badge" id="cardStudyDate">05/09/2026</span>
-                        </div>
-                        <div class="rad-info-row mt-2">
-                            <span class="rad-info-label"><i class="fa-solid fa-notes-medical"></i> Observaciones Clínicas</span>
-                            <span class="rad-info-value text-muted" style="font-size:0.78rem;">
-                                Control radiológico torácico / osteoarticular digital. Estudio de alta resolución con espaciado calibrado.
-                            </span>
-                        </div>
-                    </div>
+                <div class="rad-info-row">
+                    <span class="rad-info-label">Nombre</span>
+                    <span class="rad-info-value" id="cardPatientName">N/D</span>
                 </div>
+                <div class="rad-info-row mt-2">
+                    <span class="rad-info-label">N° Hª Clínica</span>
+                    <span class="rad-info-value" id="cardPatientHist">N/D</span>
+                </div>
+                <div class="rad-info-row mt-2">
+                    <span class="rad-info-label">F. Nacimiento</span>
+                    <span class="rad-badge" id="cardPatientBirth">N/D</span>
+                </div>
+                <div class="rad-info-row mt-2">
+                    <span class="rad-info-label">Sexo</span>
+                    <span class="rad-info-value" id="cardPatientSex">N/D</span>
+                </div>
+                <div class="rad-info-row mt-2">
+                    <span class="rad-info-label">Teléfono</span>
+                    <span class="rad-info-value" id="cardPatientPhone">N/D</span>
+                </div>
+                <div class="rad-info-row mt-2">
+                    <span class="rad-info-label">Email</span>
+                    <span class="rad-info-value text-truncate" id="cardPatientEmail" style="max-width: 170px;" title="">N/D</span>
+                </div>
+                <div class="rad-info-row mt-2">
+                    <span class="rad-info-label">Ciudad</span>
+                    <span class="rad-info-value" id="cardPatientCity">N/D</span>
+                </div>
+                <div class="rad-info-row mt-2">
+                    <span class="rad-info-label">Fecha</span>
+                    <span class="rad-info-value" id="cardPatientDate">N/D</span>
+                </div>
+            </div>
 
+            <!-- CARGA DE ARCHIVO DICOM LOCAL (ESQUINA INFERIOR DERECHA) -->
+            <div class="rad-card mt-auto mb-2">
+                <div class="rad-card-title justify-content-center text-center">
+                    Cargar DICOM
+                </div>
+                <label for="localDicomInput" class="btn-rad-action w-100 justify-content-center text-center py-2" style="cursor:pointer;">
+                    <i class="fa-solid fa-file-medical text-info"></i> Seleccionar .dcm
+                </label>
+                <input type="file" id="localDicomInput" accept=".dcm,application/dicom" style="display:none;" />
             </div>
 
         </aside>
@@ -525,6 +482,36 @@
                 <!-- Contenido dinámico si se requiere -->
             </div>
         </div>
+    </div>
+</div>
+
+<!-- MENÚ CONTEXTUAL CLÍNICO PACS -->
+<div id="pacsContextMenu" class="pacs-context-menu" style="display:none;">
+    <div class="pacs-ctx-header">Herramientas PACS</div>
+    
+    <div class="pacs-ctx-item" data-action="tool" data-val="none">
+        <i class="fa-solid fa-hand"></i> <span>Navegación (Pan)</span>
+    </div>
+    <div class="pacs-ctx-item" data-action="tool" data-val="line">
+        <i class="fa-solid fa-ruler"></i> <span>Medir Distancia</span>
+    </div>
+    <div class="pacs-ctx-item" data-action="tool" data-val="rectangle">
+        <i class="fa-regular fa-square"></i> <span>Área / ROI</span>
+    </div>
+    <div class="pacs-ctx-item" data-action="tool" data-val="angle">
+        <i class="fa-solid fa-draw-polygon"></i> <span>Medir Ángulo</span>
+    </div>
+    <div class="pacs-ctx-item" data-action="tool" data-val="magnifier">
+        <i class="fa-solid fa-magnifying-glass-plus"></i> <span>Lupa Diagnóstica</span>
+    </div>
+
+    <div class="pacs-ctx-divider"></div>
+
+    <div class="pacs-ctx-item" data-action="clear">
+        <i class="fa-solid fa-eraser"></i> <span>Limpiar Mediciones</span>
+    </div>
+    <div class="pacs-ctx-item" data-action="reset">
+        <i class="fa-solid fa-rotate-left"></i> <span>Restablecer (Reset)</span>
     </div>
 </div>
 
